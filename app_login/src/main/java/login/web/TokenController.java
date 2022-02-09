@@ -31,8 +31,9 @@ public class TokenController {
         String token = request.getHeader("Refresh");
 
         if (token != null && tokenService.verifyToken(token)) {
-            String email = tokenService.getUid(token);
-            Token newToken = tokenService.generateToken(email, "USER");
+            String wallet_address = tokenService.getWalleetAddress(token);
+            //user wallet_address를 통해 권한 정보 받아오도록 수정
+            Token newToken = tokenService.generateToken(wallet_address, "USER");
 
             response.addHeader("Auth", newToken.getToken());
             response.addHeader("Refresh", newToken.getRefreshToken());

@@ -71,7 +71,6 @@ private ResponseEntity<JSONObject> tokenValiCheck(String access_token, String pl
 		return new ResponseEntity<JSONObject>(loginResult("false", "", "token validation error"), HttpStatus.NOT_FOUND);
 	}
 	Token jwttoken = tokenService.generateToken(plud, "USER");  
-	System.out.println(jwttoken);
 	
 	return new ResponseEntity<JSONObject>(loginResult("true", jwttoken.getToken(), ""), HttpStatus.ACCEPTED);
 }
