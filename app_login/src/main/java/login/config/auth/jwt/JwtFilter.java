@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import login.service.CustomUserDetailsService;
+import login.service.TokenService;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -27,6 +28,9 @@ public class JwtFilter extends OncePerRequestFilter {
 private JwtTokenUtil jwtUtil;
 @Autowired
 private CustomUserDetailsService service;
+
+@Autowired
+private TokenService tokenService;
 @Override
 protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
 	String authorizationHeader = httpServletRequest.getHeader("Authorization");
@@ -39,7 +43,7 @@ protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServl
         userWallet = jwtUtil.getWalletFromToken(token);
     }
     
-    //jwt token에 들어있는 wallet이 유효한 지갑인지 체크 
+    //jwt token에 들어있는 wallet이 존재하는지 확인하고 유효기간 체크
     if (userWallet != null && SecurityContextHolder.getContext().getAuthentication() == null) {
         UserDetails userDetails = service.loadUserByUsername(userWallet);
     

@@ -9,7 +9,9 @@ import java.util.Date;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
@@ -17,6 +19,8 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import login.domain.token.Token;
+import login.domain.user.User;
+import login.domain.user.UserRepository;
 
 @Service
 public class TokenService {
@@ -24,6 +28,9 @@ public class TokenService {
 	
 	@Value("${jwt.secret}")
 	private String secretKey ;
+	
+	@Autowired
+	private UserRepository usersRepository;
 	
 	@PostConstruct
 	protected void init() {
@@ -75,9 +82,30 @@ public class TokenService {
 		}
 	}
 	
+	
+	
+	
+	
+	
+	//토큰의 유효성 확인 및 토큰의 wallet_address와 api를 호출대상 wallet_address가 일치하는지 비교 하는 코드
+	//다른 서비스들에서 토큰 검증용으로 사용
 	public String getWalleetAddress(String token) {
-		return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+		String wallet_address = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+		
+		if(searchWalletAddress(wallet_address)) return wallet_address ;
+		else return null ; 
 	}
+	
+	private boolean searchWalletAddress(String wallet_address) {
+		User user = usersRepository.findByUser(wallet_address);
+		if (user == null) {
+			return false ;
+		}
+		else {
+			return true ;
+		}
+	}
+
 	
 	
 }

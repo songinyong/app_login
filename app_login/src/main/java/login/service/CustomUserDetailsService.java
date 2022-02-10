@@ -36,8 +36,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 	// uid가 있을때 true 없을때 false
 	public boolean searchUid(String platfrom, String plud) {
-		System.out.println(plud);
-		if (!usersRepository.findBypludAndplatform(plud, platfrom).isEmpty()) {
+		if (usersRepository.findBypludAndplatform(plud, platfrom).isPresent()) {
 
 			return true;
 		} else

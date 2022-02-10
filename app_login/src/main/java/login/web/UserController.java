@@ -55,8 +55,7 @@ public class UserController {
     @PostMapping("/user/validation")
     public ResponseEntity<JSONObject> token_vali(@RequestBody ATValidationDto atv) {
     	 	
-    	System.out.println(atv.getPlatform()); 
-    	System.out.println(atv.getUser().get("token")); 
+
     	//String token = "Bearer "+atv.getUser().get("token") ;
     	String plud = String.valueOf(atv.getUser().get("id"));
     	System.out.println(plud);

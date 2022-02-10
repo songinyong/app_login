@@ -6,6 +6,8 @@
 
 package login.service;
 
+import java.util.Optional;
+
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,8 @@ import org.springframework.web.client.RestTemplate;
 
 import login.domain.token.Token;
 import login.domain.user.LoginRepository;
+import login.domain.user.User;
+import login.domain.user.UserRepository;
 import login.web.dto.LoginDto;
 
 @Service
@@ -29,14 +33,22 @@ public class ValidationService {
 	@Autowired
 	private LoginRepository loginRepository;
 	
+	@Autowired
+	private UserRepository usersRepository;
+
+	
+//토큰 검증 과정
 public ResponseEntity<JSONObject> token_vali(String platform, String access_token, String plud) {
 
-    	if(cuds.searchUid(platform, plud)) {
+	//uid와 platform으로 일치하는 wallet_address 값 검색
+	Optional<User> user =usersRepository.findBypludAndplatform(plud, platform);
+	
+    	if(user.isPresent()) {
     		System.out.println("uid 검색 성공");
     		LoginDto ldto = new LoginDto(platform,plud, "success");
     		loginRepository.save(ldto.toEntity());
     	
-    		return tokenValiCheck(access_token, plud) ;
+    		return tokenValiCheck(access_token, user.get().getWallet()) ;
     	
     	}
     	else {
@@ -47,8 +59,11 @@ public ResponseEntity<JSONObject> token_vali(String platform, String access_toke
             return new ResponseEntity<JSONObject>(loginResult("false", "", "failed searching uid"), HttpStatus.NOT_FOUND);
     		
     	}
-    	
     }
+
+
+
+
 
 public JSONObject loginResult(String result ,String toke  ,String error) {
 	JSONObject resultObj = new JSONObject();
@@ -61,7 +76,7 @@ public JSONObject loginResult(String result ,String toke  ,String error) {
 }
 
 //로그인 성공시 jwt 토큰 발급
-private ResponseEntity<JSONObject> tokenValiCheck(String access_token, String plud) {
+private ResponseEntity<JSONObject> tokenValiCheck(String access_token, String wallet_address) {
 	RestTemplate rt = new RestTemplate();
 	try {
 		
@@ -70,7 +85,7 @@ private ResponseEntity<JSONObject> tokenValiCheck(String access_token, String pl
 	catch (Exception e) {
 		return new ResponseEntity<JSONObject>(loginResult("false", "", "token validation error"), HttpStatus.NOT_FOUND);
 	}
-	Token jwttoken = tokenService.generateToken(plud, "USER");  
+	Token jwttoken = tokenService.generateToken(wallet_address, "USER");  
 	
 	return new ResponseEntity<JSONObject>(loginResult("true", jwttoken.getToken(), ""), HttpStatus.ACCEPTED);
 }
