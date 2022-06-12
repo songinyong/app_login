@@ -24,7 +24,7 @@ public class JasyptConfig {
 		config.setAlgorithm("PBEWithMD5AndDES");
 		
 		config.setPoolSize("1");
-		config.setProviderName("SunJCE");
+		config.setProviderName("SIY");
 		config.setSaltGeneratorClassName("org.jasypt.salt.RandomSaltGenerator");
 		config.setStringOutputType("base64");
 		
