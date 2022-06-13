@@ -80,7 +80,7 @@ public class RegisterService  {
 		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers); 
 		RestTemplate rt = new RestTemplate();
 		
-		JSONObject result =rt.postForObject("http://54.180.114.232:4081/chain/walletCreate", entity, JSONObject.class);
+		JSONObject result =rt.postForObject("http://54.180.114.232:5555/chain/walletCreate", entity, JSONObject.class);
 		
 		return (String)result.get("wallet_address");
 		
