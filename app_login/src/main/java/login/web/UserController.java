@@ -65,8 +65,8 @@ public class UserController {
     //회원가입 요청 처리 
     @PostMapping("/user/register")
     public ResponseEntity<JSONObject> registerUser(@RequestBody RegisterDto rdto) {
-    	System.out.println(rdto.getPlatform());
-    	System.out.println(valiService.tokenValiCheck((String) rdto.getUser_info().get("token")));
+    	System.out.println(rdto.getUser_info().get("token"));
+    	System.out.println(valiService.tokenValiCheck((String) rdto.getUser_info().get("token"))+"vali상태 체크");
     	
     	System.out.println(resService.getWallet());
     	
